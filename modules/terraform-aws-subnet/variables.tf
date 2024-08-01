@@ -4,13 +4,15 @@ variable "vpc_id" {
 }
 
 variable "availability_zone" {
-  type    = string
-}
-
-variable "cidr_block"{
   type = string
 }
 
-#variable "subnet_count"{
-  #type = number
-#}
+variable "cidr_block" {
+  type = string
+}
+
+variable "subnet_usage" {
+  description = "The usage type for the subnet (e.g., ec2, db)"
+  type        = string
+}
+
