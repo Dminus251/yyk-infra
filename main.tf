@@ -15,11 +15,12 @@ module "subnet" {
 }
 
 module "rds"{
+  depends_on = [module.subnetgroup]
   source = "./modules/terraform-aws-rds"
   
   allocated_storage    = var.allocated_storage
   db_name              = var.db_name
-  #db_subnet_group_name =
+  db_subnet_group_name = module.subnetgroup.name
   engine               = var.engine
   engine_version       = var.engine_version
   instance_class       = var.instance_class
@@ -28,4 +29,12 @@ module "rds"{
   parameter_group_name = var.parameter_group_name
   skip_final_snapshot  = var.skip_final_snapshot
   multi_az = var.multi_az
+}
+
+module "subnetgroup"{
+  source = "./modules/terraform-aws-subnetgroup"
+  name       = var.name
+  subnet_ids = [
+    for s in module.subnet : s.id if s.subnet_usage == "db"
+  ]
 }

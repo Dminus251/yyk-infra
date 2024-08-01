@@ -10,6 +10,11 @@ variable "db_name" {
   default     = "yykdb"
 }
 
+variable "db_subnet_group_name"{
+  type = string
+  default = "0801 subnet"
+}
+
 variable "engine" {
   type    = string
   default = "mysql"
