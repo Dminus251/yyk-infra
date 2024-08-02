@@ -1,7 +1,7 @@
 resource "aws_db_instance" "default" {
   allocated_storage    = var.allocated_storage 
   db_name              = var.db_name
-  #db_subnet_group_name =
+  db_subnet_group_name = var.db_subnet_group_name
   engine               = var.engine
   engine_version       = var.engine_version
   instance_class       = var.instance_class

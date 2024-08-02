@@ -38,3 +38,7 @@ module "subnetgroup"{
     for s in module.subnet : s.id if s.subnet_usage == "db"
   ]
 }
+
+output "subnetgroup_name" {
+  value = module.subnetgroup.name #main
+}
