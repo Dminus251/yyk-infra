@@ -22,6 +22,12 @@ module "public_subnet"{
   vpc_id        = module.vpc.vpc_id
   subnet_usage  = "public"
 }
+
+module "igw"{
+  source	= "./modules/terraform-aws-igw"
+  vpc_id	= module.vpc.vpc_id
+}
+
 /*
 module "rds"{
   depends_on = [module.subnetgroup]
@@ -41,7 +47,7 @@ module "rds"{
 }
 */
 module "subnetgroup"{
-  source = "./modules/terraform-aws-subnetgroup"
+  source = "./modules/terraform-aws-subnet_group"
   name       = var.name
   subnet_ids = [
     for s in module.private_subnet : s.id if s.subnet_usage == "db"
