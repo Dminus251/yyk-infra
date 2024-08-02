@@ -28,6 +28,25 @@ module "igw"{
   vpc_id	= module.vpc.vpc_id
 }
 
+module "route_table"{
+  source	= "./modules/terraform-aws-route_table"
+  vpc_id	= module.vpc.vpc_id
+  cidr_block	= "0.0.0.0/0" #나중에 수정
+  gateway_id	= module.igw.igw_id
+
+}
+
+module "route_table_association"{
+  source	 = "./modules/terraform-aws-route_table_association"
+  count          = length(var.availability_zones) 
+  #subnet_ids	 = [
+  #  for s in module.public_subnet : s.id
+  #]
+  #subnet_id 	 = subnet_ids[count.index]
+  subnet_id	 = module.public_subnet[count.index].id #select public subnet 
+  route_table_id = module.route_table.route_table_id #associate public subnet with route table
+}
+
 /*
 module "rds"{
   depends_on = [module.subnetgroup]
@@ -45,7 +64,7 @@ module "rds"{
   skip_final_snapshot  = var.skip_final_snapshot
   multi_az = var.multi_az
 }
-*/
+
 module "subnetgroup"{
   source = "./modules/terraform-aws-subnet_group"
   name       = var.name
@@ -57,3 +76,4 @@ module "subnetgroup"{
 output "subnetgroup_name" {
   value = module.subnetgroup.name #main
 }
+*/

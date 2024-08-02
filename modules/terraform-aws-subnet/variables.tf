@@ -12,7 +12,7 @@ variable "cidr_block" {
 }
 
 variable "subnet_usage" {
-  description = "The usage type for the subnet (e.g., ec2, db)"
+  description = "The usage type for the subnet (e.g., ec2, db, public)"
   type        = string
 }
 

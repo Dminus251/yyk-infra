@@ -1,6 +1,6 @@
 variable "name" {
   type    = string
-  default = "main"
+  default = "yyk-subnet_group"
 }
 variable "subnet_ids" {
   type = list(string)
