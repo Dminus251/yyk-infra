@@ -5,7 +5,7 @@ module "vpc" {
 }
 
 
-module "subnet" {
+module "private_subnet" {
   source        = "./modules/terraform-aws-subnet"
   count         = length(var.availability_zones) * 2  # 두 개의 가용 영역에 대해 각각 2개의 서브넷
   cidr_block    = cidrsubnet(module.vpc.vpc_cidr, 4, count.index)  # 서브넷의 CIDR 블록 계산
@@ -14,6 +14,15 @@ module "subnet" {
   subnet_usage        = element(["ec2", "db"], count.index % 2)  # 서브넷 용도 할당
 }
 
+module "public_subnet"{
+  source        = "./modules/terraform-aws-subnet"
+  count         = length(var.availability_zones) 
+  cidr_block    = cidrsubnet(module.vpc.vpc_cidr, 4, count.index + length(var.availability_zones) * 2) 
+  availability_zone = var.availability_zones[count.index] 
+  vpc_id        = module.vpc.vpc_id
+  subnet_usage  = "public"
+}
+/*
 module "rds"{
   depends_on = [module.subnetgroup]
   source = "./modules/terraform-aws-rds"
@@ -30,12 +39,12 @@ module "rds"{
   skip_final_snapshot  = var.skip_final_snapshot
   multi_az = var.multi_az
 }
-
+*/
 module "subnetgroup"{
   source = "./modules/terraform-aws-subnetgroup"
   name       = var.name
   subnet_ids = [
-    for s in module.subnet : s.id if s.subnet_usage == "db"
+    for s in module.private_subnet : s.id if s.subnet_usage == "db"
   ]
 }
 
