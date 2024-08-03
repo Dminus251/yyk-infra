@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "yyk-eks_cluster" {
-  name     = "example"
+  name     = var.cluster_name
   role_arn = aws_iam_role.iam_role_for_eks-cluster.arn
 
   vpc_config {
@@ -11,6 +11,7 @@ resource "aws_eks_cluster" "yyk-eks_cluster" {
   depends_on = [
     aws_iam_role_policy_attachment.example-AmazonEKSClusterPolicy,
     #aws_iam_role_policy_attachment.example-AmazonEKSVPCResourceController,
+    aws_iam_role_policy_attachment.attach_eks_custom_policy,
   ]
 }
 
@@ -46,3 +47,50 @@ resource "aws_iam_role_policy_attachment" "example-AmazonEKSClusterPolicy" {
 #  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
 #  role       = aws_iam_role.example.name
 #}
+
+
+
+
+#사용자 정의 IAM policy 생성
+#노드 그룹을 확인할 수 없어서 새로 추가함
+#아래 문서 참조
+#https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/view-kubernetes-resources.html#view-kubernetes-resources-permissions
+
+resource "aws_iam_policy" "eks_custom_policy" {
+  name        = "eks-custom-policy"
+  description = "Custom policy for EKS cluster to access various AWS resources"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "eks:ListFargateProfiles",
+          "eks:DescribeNodegroup",
+          "eks:ListNodegroups",
+          "eks:ListUpdates",
+          "eks:AccessKubernetesApi",
+          "eks:ListAddons",
+          "eks:DescribeCluster",
+          "eks:DescribeAddonVersions",
+          "eks:ListClusters",
+          "eks:ListIdentityProviderConfigs",
+          "iam:ListRoles"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = "ssm:GetParameter"
+        Resource = "arn:aws:ssm:*:992382518527:parameter/*" #내 계정 ID
+      }
+    ]
+  })
+}
+#위 esk custom policy를 eks의 role에 연결
+resource "aws_iam_role_policy_attachment" "attach_eks_custom_policy" {
+  policy_arn = aws_iam_policy.eks_custom_policy.arn
+  role       = aws_iam_role.iam_role_for_eks-cluster.name
+}
+

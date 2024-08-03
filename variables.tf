@@ -11,3 +11,8 @@ variable "availability_zones" {
 variable "AWS_REGION" {
   default = "ap-northeast-2"
 }
+
+variable "ami" {
+  type	  = string
+  default = "ami-0443a434a57db296a"
+}
