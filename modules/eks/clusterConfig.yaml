@@ -1,0 +1,28 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: my-cluster
+  region: ap-norhteast-2
+  version: "1.30"
+
+vpc:
+  subnets:
+    private:
+      ap-northeast-2a: { id: ""} #프로비저닝된 서브넷 id
+      ap-northeast-2c: { id: ""}
+
+ManagednodeGroups:
+  - name: 
+    instanceType: t3.demium
+    instanceName: worker-node
+    desiredCapacity: 2
+
+    volumeType: gp3
+    volumeSize: 20
+
+    ssh:
+      allow: true
+      publicKeyName: "0802"
+    
+    lables: {role: worker}

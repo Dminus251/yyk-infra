@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: test-app #이 pod들로 트래픽 전송
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+
