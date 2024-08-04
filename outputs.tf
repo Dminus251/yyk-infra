@@ -41,3 +41,4 @@ output "bastion_id" {
 output "id" {
   value = module.sg_for_bastion.id
 }
+

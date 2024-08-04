@@ -29,11 +29,11 @@ module "sg_for_db"{
   cidr_ipv4	= module.vpc.vpc_cidr
 }
 
+
 module "sg_for_bastion"{
   source	= "./modules/terraform-aws-security_group/bastion"
   vpc_id	= module.vpc.vpc_id
   cidr_ipv4	= module.vpc.vpc_cidr
-  
 }
 
 module "bastion"{
