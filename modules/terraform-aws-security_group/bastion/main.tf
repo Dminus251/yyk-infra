@@ -9,15 +9,16 @@ resource "aws_security_group" "sg_for_bastion" {
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]  # IGW
   }
+  #아웃바운드
+  #이게 디폴트로 적용되는 줄 알았는데 이걸 해야 트래픽이 나감
+  iegress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
   tags = {
     Name = "sg_for_bastion"
   }
 }
 
-#resource "aws_vpc_security_group_ingress_rule" "allow_tls_ipv4" {
-#  security_group_id = aws_security_group.sg_for_bastion.id
-#  cidr_ipv4         = var.cidr_ipv4
-#  from_port         = 22
-#  ip_protocol       = "tcp"
-#  to_port           = 22
-#}
