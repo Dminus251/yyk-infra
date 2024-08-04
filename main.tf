@@ -56,6 +56,14 @@ module "eip"{
   source	= "./modules/terraform-aws-eip"
   count         = length(var.availability_zones)
 }
+
+module "nat"{
+  source	= "./modules/terraform-aws-nat"
+  count         = length(var.availability_zones)
+  #allocation_id = module.eip[count.index].eip_id
+  allocation_id = module.eip[count.index].id
+  subnet_id	 = module.public_subnet[count.index].id #select public subnet 
+}
 #0.0.0.0/0을 igw로 라우팅
 module "route_table"{
   source	= "./modules/terraform-aws-route_table"
