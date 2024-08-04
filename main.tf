@@ -1,26 +1,26 @@
 module "vpc" {
   source 	= "./modules/terraform-aws-vpc"  # 로컬 모듈 경로
-  vpc_name      = "my-vpc" #나중에 var로 변경하자
+  vpc_name      = var.vpc_name #나중에 var로 변경하자
   vpc_cidr	= "10.0.0.0/16"
 }
 
 
 module "private_subnet" {
-  source        = "./modules/terraform-aws-subnet"
-  count         = length(var.availability_zones) * 2  # 두 개의 가용 영역에 대해 각각 2개의 서브넷
-  cidr_block    = cidrsubnet(module.vpc.vpc_cidr, 4, count.index)  # 서브넷의 CIDR 블록 계산
+  source            = "./modules/terraform-aws-subnet"
+  count             = length(var.availability_zones) * 2  # 두 개의 가용 영역에 대해 각각 2개의 서브넷
+  cidr_block        = cidrsubnet(module.vpc.vpc_cidr, 4, count.index)  # 서브넷의 CIDR 블록 계산
   availability_zone = var.availability_zones[floor(count.index/2)]  # 가용 영역 할당
-  vpc_id        = module.vpc.vpc_id
-  subnet_usage        = element(["ec2", "db"], count.index % 2)  # 서브넷 용도 할당
+  vpc_id            = module.vpc.vpc_id
+  subnet_usage      = element(["ec2", "db"], count.index % 2)  # 서브넷 용도 할당
 }
 
 module "public_subnet"{
-  source        = "./modules/terraform-aws-subnet"
-  count         = length(var.availability_zones) 
-  cidr_block    = cidrsubnet(module.vpc.vpc_cidr, 4, count.index + length(var.availability_zones) * 2) 
+  source            = "./modules/terraform-aws-subnet"
+  count             = length(var.availability_zones) 
+  cidr_block        = cidrsubnet(module.vpc.vpc_cidr, 4, count.index + length(var.availability_zones) * 2) 
   availability_zone = var.availability_zones[count.index] 
-  vpc_id        = module.vpc.vpc_id
-  subnet_usage  = "public"
+  vpc_id            = module.vpc.vpc_id
+  subnet_usage      = "public"
 }
 
 module "sg_for_db"{
@@ -37,13 +37,13 @@ module "sg_for_bastion"{
 }
 
 module "bastion"{
-  source	= "./modules/terraform-aws-ec2"
-  ami		= var.ami
-  subnet_id	= module.public_subnet[0].id
-  associate_public_ip_address = true #나중에 var로 수정(모듈에서도)
+  source			= "./modules/terraform-aws-ec2"
+  ami				= var.ami
+  subnet_id			= module.public_subnet[0].id
+  associate_public_ip_address   = true #나중에 var로 수정(모듈에서도)
   key_name = "0802" #나중에 var로 수정(모듈에서도)
-  vpc_security_group_ids = [
-    module.sg_for_bastion.id
+  vpc_security_group_ids 	= [
+ 	   module.sg_for_bastion.id
   ]
 }
 
