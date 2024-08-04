@@ -52,6 +52,10 @@ module "igw"{
   vpc_id	= module.vpc.vpc_id
 }
 
+module "eip"{
+  source	= "./modules/terraform-aws-eip"
+  count         = length(var.availability_zones)
+}
 #0.0.0.0/0을 igw로 라우팅
 module "route_table"{
   source	= "./modules/terraform-aws-route_table"

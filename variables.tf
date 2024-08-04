@@ -101,7 +101,3 @@ variable "vpc_name" {
   default = "my-vpc"
 }
 
-#bastion의 ingress에 사용
-variable "cidr_blocks" {
-  type = string
-}
